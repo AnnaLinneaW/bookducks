@@ -15,6 +15,9 @@
     <nav class="navbar container-xxl title ">
         <div class="container-fluid">
          <a class="navbar-brand " href="#">Book Ducks</a>
+         <div class="navbar-text">
+             <a id="profileBookListNav">Booklist</a>
+            </div>
         </div>
       </nav>
 </header>
@@ -41,7 +44,7 @@
           <label for="exampleInputPassword1" class="form-label">Password</label>
           <input type="password" class="form-control" id="password">
         </div>
-        <input type="button" class="btn btn-primary" id="logInBtn" value="LoggIn">
+        <input type="button" class="btn btn-primary" id="logInBtn" value="LogIn">
         <input type="button" class="btn btn-secondary" id="regNewBtn" value="Register">
     </form>
     </div>
@@ -65,8 +68,20 @@
     </div>
 
 <div id="bookListWrapper" class="hidden">
+    <h3>Våra böcker:</h3>
+    <div class="row g-2 gx-2" id="bookList">
+        
+    <!-- <ul id="bookList"></ul> -->
+        </div>
+    </div>
+</div>
+<div id="userBookListWrapper" class="hidden">
     <h3>Dina sparade böcker:</h3>
-    <ul id="bookList"></ul>
+    <div class="row">
+        <div class="col-sm-6 mb-3 mx-3 g-4 align-items-center" id="userBookList">
+            <ul>Placeholder</ul>
+        </div>
+    </div>
 </div>
 
 

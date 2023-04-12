@@ -37,6 +37,12 @@
       "type": "integer",
       "max": 5,
       "min": 0
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "books"
     }
   }
 }

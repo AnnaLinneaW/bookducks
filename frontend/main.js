@@ -119,21 +119,22 @@ profileBookListNav.addEventListener("click", () => {
 
 getUserBooks = async () => {
     const userId = sessionStorage.getItem("loginId");
-    const response = await fetch(`http://localhost:1337/api/users/${userId}/books`, {
+    const response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         }
     });
     const data = await response.json();
-    const books = data.data;
+    const books = data.books;
+    console.log(data.books);
     userBookList.innerHTML = "";
     books.forEach((book) => {
         userBookList.innerHTML += `
         <div class="card g-4 p-4 mx-3" style="width: 15rem;">
-        <img src="http://localhost:1337${book.attributes.cover.data.attributes.url}" class="card-img-top" alt="...">
+        <img src="http://localhost:1337${book.cover.url}" class="card-img-top" alt="...">
         <div class="card-body">
-            <h5 class="card-title" id="bookTitle">${book.attributes.title}</h5>
-            <p class="card-text" id="bookAuthor">${book.attributes.author}</p>
+            <h5 class="card-title" id="bookTitle">${book.title}</h5>
+            <p class="card-text" id="bookAuthor">${book.author}</p>
             <button onclick="deleteBook(${book.id})">Delete</button>
             </div>
             </div>`

@@ -46,13 +46,14 @@ const login = async () => {
             'Content-Type': 'application/json',
         },
 });
+let data = await response.json();
 if (!response.ok) {
     document.querySelector('h2').innerHTML = `Fel användarnamn eller lösenord`;
-} else{
-    let data = await response.json();
+} else {
     sessionStorage.setItem('token', data.jwt);
     sessionStorage.setItem("loginId", data.user.id);
       document.querySelector('h2').innerHTML = `Välkommen ${data.user.username}`;
+      console.log("token");
       console.log(data);
     };
     if (sessionStorage.getItem('token')) {
@@ -60,10 +61,24 @@ if (!response.ok) {
         logInWrapper.classList.add("hidden");
         bookListWrapper.classList.remove("hidden");
     }
-    getBooks();
+getBooks();
 };
+let logout = async () => {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('loginId');
+    document.querySelector('h2').innerHTML = `Du är utloggad`;
+    logInWrapper.classList.remove("hidden");
+    bookListWrapper.classList.add("hidden");
+    userBookListWrapper.classList.add("hidden");
+};
+// let landingPage = () => {
+//     let response = fetch('http://localhost:1337/api/books?populate=*', {
+//         headers: {
+//             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+//         },
+//     });
 
-// 
+// };
 let getBooks = async () => {
     // let token = sessionStorage.getItem('token');
     let response = await fetch("http://localhost:1337/api/books?populate=*", {
@@ -83,39 +98,78 @@ let getBooks = async () => {
         <div class="card-body">
           <h5 class="card-title" id="bookTitle">${book.attributes.title}</h5>
           <p class="card-text" id="bookAuthor">${book.attributes.author}</p>
-          <button onclick="addBook(${book.id})">Add</button>
+          <select id="newGrade">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            </select>
+            <button onclick="bookGrade(${book.id})">Grade</button>
+          <button onclick="addUserBook(${book.id})">+</button>
           </div>
           </div>`
         });
     };
     // <button onclick="deleteBook(${book.id})">Delete</button>
 
-const addBook = async (bookId) => {
+// 
+const addUserBook = async (bookId) => {
     const userId = sessionStorage.getItem("loginId");
-    const response = await fetch(`http://localhost:1337/api/users/${userId}/books`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        book: bookId,
-      }),
+    const firstResponse = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        }
+    });
+    const firstData = await firstResponse.json();
+    const books = firstData.books;
+    const response = await fetch(`http://localhost:1337/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+            books: [...books, bookId],
+        }),
     });
     const data = await response.json();
+    console.log(response);
     if (data.error) {
-      console.log(data.error);
+        console.log(data.error);
     } else {
-      console.log(data.message);
+        console.log(data.message);
     }
-  };
+};
+
+  const bookGrade = async (id) => {
+    const newGrade = document.querySelector("#newGrade");
+    const userId = sessionStorage.getItem("loginId");
+    const response = await fetch(`http://localhost:1337/api/books?populate=deep,3`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+            grade: newGrade.value,
+        }),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (data.error) {
+        console.log(data.error);
+    } else {
+        console.log(data.message);
+    }
+};
+
 
 profileBookListNav.addEventListener("click", () => {
     bookListWrapper.classList.add("hidden");
     userBookListWrapper.classList.remove("hidden");
     getUserBooks();
 });
-            
 
 getUserBooks = async () => {
     const userId = sessionStorage.getItem("loginId");
@@ -141,7 +195,7 @@ getUserBooks = async () => {
         });
     };
 
-
+document.querySelector("#logOutNav").addEventListener("click", logout);
 document.querySelector("#regNewBtn").addEventListener("click", ()=>{
     regDiv.classList.remove("hidden");
     logInWrapper.classList.add("hidden");

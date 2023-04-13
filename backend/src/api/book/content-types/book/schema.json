@@ -32,17 +32,17 @@
         "audios"
       ]
     },
-    "grade": {
-      "default": 0,
-      "type": "integer",
-      "max": 5,
-      "min": 0
-    },
     "user": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
       "inversedBy": "books"
+    },
+    "grades": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::grade.grade",
+      "mappedBy": "book"
     }
   }
 }

@@ -71,6 +71,12 @@
       "relation": "manyToMany",
       "target": "api::book.book",
       "mappedBy": "user"
+    },
+    "grades": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::grade.grade",
+      "mappedBy": "user"
     }
   }
 }

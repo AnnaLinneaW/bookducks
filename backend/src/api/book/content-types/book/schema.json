@@ -43,6 +43,9 @@
       "relation": "oneToMany",
       "target": "api::grade.grade",
       "mappedBy": "book"
+    },
+    "ReleseDate": {
+      "type": "date"
     }
   }
 }

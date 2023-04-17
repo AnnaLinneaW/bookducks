@@ -4,7 +4,8 @@
   "info": {
     "singularName": "grade",
     "pluralName": "grades",
-    "displayName": "Grade"
+    "displayName": "Grade",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -22,11 +23,11 @@
       "target": "api::book.book",
       "inversedBy": "grades"
     },
-    "user": {
+    "users": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToMany",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "grades"
+      "mappedBy": "grade"
     }
   }
 }

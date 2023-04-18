@@ -17,3 +17,19 @@ body {
 .hidden{
     display: none;
 }
+.btn{
+    background-color: rgb(189, 161, 20);
+    border-style: none;
+}
+.btn:hover{
+    background-color: rgb(10, 112, 34);
+    color: #000;
+}
+
+select{
+    background-color: rgb(189, 161, 20);
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    border-style: none;
+    height: 35px;
+}

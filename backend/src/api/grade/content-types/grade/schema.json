@@ -17,17 +17,17 @@
       "max": 5,
       "min": 0
     },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "grades"
+    },
     "book": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::book.book",
       "inversedBy": "grades"
-    },
-    "users": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "plugin::users-permissions.user",
-      "mappedBy": "grade"
     }
   }
 }

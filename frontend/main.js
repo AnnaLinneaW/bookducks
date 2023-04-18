@@ -81,10 +81,13 @@ const logout = async () => {
     sessionStorage.removeItem('loginId');
     document.querySelector('h2').innerHTML = `Du är utloggad`;
     logInWrapper.classList.remove("hidden");
+    userBookListWrapper.classList.add("hidden");
+    bookListWrapper.classList.remove("hidden");
+    loggedOutBooks();
 };
 
 const getBooks = async () => {
-    let response = await fetch("http://localhost:1337/api/books?populate=*", {
+    let response = await fetch("http://localhost:1337/api/books?populate=deep,3", {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         }
@@ -92,29 +95,33 @@ const getBooks = async () => {
     let data = await response.json();
     let books = data.data;
     let bookList = document.querySelector("#bookList");
-    
+    console.log(books)
     
     bookList.innerHTML = "";
-    books.forEach((book) => {
+    books.forEach(async(book) => {
+        let rating = await yourRating(book.id);
         bookList.innerHTML += `
-        <div class="card g-4 p-4 mx-3" style="width: 15rem;">
-        <img src="http://localhost:1337${book.attributes.cover.data.attributes.url}" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title" id="bookTitle">${book.attributes.title}</h5>
-          <p class="card-text" id="bookAuthor">${book.attributes.author}</p>
-          <p class="card-text" id="releseDate">${book.attributes.ReleseDate}</p>
-          <select id="newGrade">
-            <option value="None">None</option>         
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            </select>
-            <button id="">Grade</button>
-          <button onclick="addUserBook(${book.id})">+</button>
-          </div>
-          </div>`
+            <div class="card g-4 p-4 mx-3" style="width: 15rem;">
+                <img src="http://localhost:1337${book.attributes.cover.data.attributes.url}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title" id="bookTitle">${book.attributes.title}</h5>
+                    <p class="card-text" id="bookAuthor">${book.attributes.author}</p>
+                    <p class="card-text" id="releseDate">${book.attributes.ReleseDate}</p>
+                    <p class="card-text"></p>
+                    <p class="card-text" id="rating">Betyg: ${rating}</p>
+                    <select id="newGrade">
+                        <option value="None">None</option>         
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <input type="button" class="btn btn-primary m-3" onclick="bookGrade(this.previousElementSibling.value, '${book.id}')"value="Rate">
+                    <input type="button" class="btn btn-primary" onclick="addUserBook(${book.id})"value="+ Lägg i min lista">
+                </div>
+            </div>`;
+        
         });
     };
 
@@ -138,7 +145,6 @@ const loggedOutBooks = async () => {
               </div>`
             });
         };
-
 const addUserBook = async (bookId) => {
     const userId = sessionStorage.getItem("loginId");
     const firstResponse = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
@@ -167,29 +173,69 @@ const addUserBook = async (bookId) => {
     }
 };
 
-//   const bookGrade = async (id) => {
-//     const newGrade = document.querySelector("#newGrade").value;
-//     const userId = sessionStorage.getItem("loginId");
-//     const response = await fetch(`http://localhost:1337/api/books/${id}?populate=deep,3`, {
-//         method: "PUT",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-//         },
-//         body: JSON.stringify({ 
-//             data: 
-//             { grade: newGrade }}),
-    
-//         })
-//     ;
-//     const data = await response.json();
-//     console.log(data);
-//     if (data.error) {
-//         console.log(data.error);
-//     } else {
-//         console.log(data.message);
-//     }
-// };
+const bookGrade = async (newGrade, bookId) => {
+    const userId = sessionStorage.getItem("loginId");
+    const firstResponse = await fetch(`http://localhost:1337/api/users/${userId}?populate=deep,3`, {
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        }
+    });
+    const firstData = await firstResponse.json();
+    const grades = firstData.grades || [];    
+    console.log(grades);
+
+    // Check if the book already has a grade object
+    const bookGrades = grades.filter((g) => g.book && g.book.id === bookId);
+    if (bookGrades.length > 0) {
+        // If the book already has a grade object, update it
+        const gradeId = bookGrades[0].id;
+        const response = await fetch(`http://localhost:1337/api/grades/${gradeId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+                grade: newGrade,
+                book: bookId,
+                user: userId,
+            }),
+        });
+        const data = await response.json();
+        console.log(newGrade);
+
+        if (data.error) {
+            console.log(data.error);
+        } else {
+            console.log(data.message);
+        }
+    } else {
+        // If the book doesn't have a grade object, create a new one
+        const response = await fetch(`http://localhost:1337/api/grades`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+                data: {
+                    grade: newGrade,
+                    book: bookId,
+                    user: userId,
+                }
+            }),
+        });
+        const data = await response.json();
+        console.log(newGrade);
+
+        if (data.error) {
+            console.log(data.error);
+        } else {
+            console.log(data.message);
+        }
+    }
+    getBooks();
+};
 
 
 profileBookListNav.addEventListener("click", () => {
@@ -199,7 +245,6 @@ profileBookListNav.addEventListener("click", () => {
 });
 
 getUserBooks = async () => {
-    const userId = sessionStorage.getItem("loginId");
     const response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -216,7 +261,6 @@ getUserBooks = async () => {
         <div class="card-body">
             <h5 class="card-title" id="bookTitle">${book.title}</h5>
             <p class="card-text" id="bookAuthor">${book.author}</p>
-            <button onclick="deleteBook(${book.id})">Delete</button>
             </div>
             </div>`
         });
@@ -275,59 +319,29 @@ let deleteBook = async (id) => {
     getBooks();
   };
   
+
+
+let yourRating = async (bookId) => {
+    let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
+        method: "GET",
+        headers:{
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        },
+    });
+    data = await response.json();
+    youRatingArray = data.grades;
+    let yourBookRating = ""
+    data.grades.forEach(grade => {
+        if (grade.book.id === bookId) {
+            yourBookRating = (grade.grade);
+            console.log(yourBookRating);
+        }
+    })
+    if (yourBookRating === "") {
+        return "Not yet rated";
+    }
+    return `${yourBookRating}`/5;
+    
+}
+
 loggedOutBooks();
-
-
-// let ratingSelect = document.querySelector("#newGrade");
-
-// ratingSelect.addEventListener("change", async () => {
-//     const userId = sessionStorage.getItem("loginId");
-//     // If the user selects a number and not the default "none".
-//     if (ratingSelect.value !== "None"){
-//         // Getting all the ratings from the user.
-//         let response = await fetch(`http://localhost:1337/api/users/${userId}/?populate=deep,3`, {
-//             method: "POST",
-//         headers:{
-//                 Authorization: `Bearer ${sessionStorage.getItem("token")}`
-//             },
-//         });
-//         // For every rating that exist (loop dosen't start if there is no ratings).
-//         for(let i = 0; i < response.data.grades.length; i++) {
-//             // If the book already has a rating we use "put" to update that rating.
-//             if (response.data.grades[i].book.id === bookId){
-//                 let responsePut = await fetch (`http://localhost:1337/api/grades/${grades[i].id}`, {
-                   
-//                 body: JSON.stringify({
-//                         grade: ratingSelect.value,
-//                         user: sessionStorage.getItem('loginId'),
-//                         book: bookId
-//                       })
-//                     }, 
-//                     {
-//                     headers: {
-//                         Authorization: `Bearer ${sessionStorage.getItem("token")}`
-//                     }
-//                 })
-//                 // Everything renders again (so we don't continue and create a new rating (code below) if we wanted to update)
-//                 return getBooks(); 
-//             }
-//         }
-// // If there was no rating for the book the user wants to rate we will post a new rating.
-//             let responsePost = await fetch(`http://localhost:1337/api/grades`, {
-//             method: "POST",    
-            
-//             body: JSON.stringify({
-//                 grade: ratingSelect.value,
-//                 user: sessionStorage.getItem('loginId'),
-//                 book: bookId
-//               })
-//             },
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${sessionStorage.getItem("token")}`
-//                 },
-//             })
-
-//         getBooks();
-//     }
-// });

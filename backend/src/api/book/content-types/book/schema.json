@@ -38,14 +38,14 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "books"
     },
+    "ReleseDate": {
+      "type": "date"
+    },
     "grades": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::grade.grade",
       "mappedBy": "book"
-    },
-    "ReleseDate": {
-      "type": "date"
     }
   }
 }

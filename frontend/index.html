@@ -10,17 +10,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="p-3 mb-2 bg-warning-subtle">
+<body class="p-3 mb-2">
     <!-- Header nav -->
 <header >
     <nav class="navbar container-xxl title ">
         <div class="container-fluid">
-         <a class="navbar-brand " href="#" id="homeBtn">Book Ducks</a>
+         <a class="navbar-brand cta " href="#" id="homeBtn">Book Ducks</a>
          <div class="navbar-text">
-             <a id="profileBookListNav">Min sida</a>
+             <a id="profileBookListNav" class="btn blink">Min sida</a>
             </div>
             <div class="navbar-text">
-                <a id="logOutNav">Logga ut</a>
+                <a id="logOutNav" class="btn blink">Logga ut</a>
         </div>
       </nav>
 </header>
@@ -73,18 +73,39 @@
     </form>
     </div>
 <!-- Stores booklist -->
-<div class="m-5" id="bookListWrapper">
+<div class="m-5 " id="bookListWrapper">
     <h3 class="text-center" >Våra böcker:</h3>
-    <div class="row g-2 gx-2" id="bookList">
+    <div class="row g-2 gx-2 justify-content-center" id="bookList">
         </div>
     </div>
 </div>
 <!-- Users booklist -->
 <div id="userBookListWrapper" class="hidden">
-    <h3>Dina sparade böcker:</h3>
-    <div class="row g-2 gx-2"id="userBookList">
+    <h3 class="text-center">Dina sparade böcker:</h3>
+    <div class="row g-2 gx-2 justify-content-center"id="userBookList">
     </div>
 </div>
+<!-- Ratedbooks -->
+<div id="ratedBooksWrapper" class="hidden justify-content-center">
+<h3 class="text-center m-4">Dina betygsatta böcker:</h3>
+<div class="d-flex justify-content-center">
+<div class="form-check form-check-inline">
+    <input class="form-check-input " type="radio" name="sort" id="sortTitle" value="Titel" checked>
+    <label class="form-check-label" for="sortTitle">Sortera på titel</label>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="sort" id="sortAuthor" value="Författare">
+    <label class="form-check-label" for="sortAuthor">Sortera på författare</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="sort" id="sortRating" value="Betyg">
+    <label class="form-check-label" for="sortRating">Sortera på betyg</label>
+    </div>
+  </div>
+</div>
+<div class="row g-2 gx-2 justify-content-center" id="myRatedBooks">
+    </div>
+</div>
+
 </main>
 </body>
 </html>

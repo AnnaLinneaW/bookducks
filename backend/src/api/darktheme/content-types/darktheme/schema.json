@@ -1,0 +1,23 @@
+{
+  "kind": "singleType",
+  "collectionName": "darkthemes",
+  "info": {
+    "singularName": "darktheme",
+    "pluralName": "darkthemes",
+    "displayName": "Darktheme"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "theme": {
+      "type": "enumeration",
+      "enum": [
+        "dark",
+        "light"
+      ],
+      "required": true
+    }
+  }
+}

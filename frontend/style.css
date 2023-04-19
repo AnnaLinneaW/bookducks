@@ -1,16 +1,32 @@
-body {
-    background-color: rgb(10, 112, 34);
+body.light {
+    background-color: #fefae0;
     color: #000;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1.42857143;
     margin: 0;
     padding: 0;
+    font-family: bw-gradual;
+}
+.cta{
+   font-size: 30px;
+}
+body.dark{
+    background-color: #a36115;
+    color: #283618;
+}
+body.dark .title{
+    background-color: #606c38;
+    color: #283618;
+}
+body.dark .card{
+    background-color: #dda15e;
+    color: #283618;
 }
 .title{
     border-style: solid;
     border-width: 1px;
     border-color: #000;
-    background-color: rgb(189, 161, 20);
+    background-color: #e9edc9;
     width: 100%;
     margin: none;
 }
@@ -18,18 +34,49 @@ body {
     display: none;
 }
 .btn{
-    background-color: rgb(189, 161, 20);
-    border-style: none;
+    background-color: #ccd5ae;
+    color: #000;
+    border-style: solid;
+    border-color: #000;
+    border-radius: 5px;
 }
 .btn:hover{
-    background-color: rgb(10, 112, 34);
-    color: #000;
+    background-color: #e9edc9;
+    color:  rgb(86, 84, 84);
+    border-style: solid;
+    border-color: #000;
+}
+.blink{
+    border: none;
+    background-color: transparent;
+
+}
+.blink:hover{
+    border: none;
+    background-color: transparent;
 }
 
+
 select{
-    background-color: rgb(189, 161, 20);
-    color: rgb(255, 255, 255);
+    background-color: #ccd5ae;
+    color: #000;
     border-radius: 5px;
-    border-style: none;
+    border-style: solid;
     height: 35px;
+    border-radius: 5px;
+}
+select:hover{
+    background-color: #e9edc9;
+    color: rgb(86, 84, 84);
+    border-style: solid;
+    border-color: #000;
+}
+.card{
+    background-color: #d4a373;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #000;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
 }

@@ -9,6 +9,9 @@ let userBookListWrapper = document.querySelector("#userBookListWrapper");
 let profileBookListNav = document.querySelector("#profileBookListNav");
 let homeBtn = document.querySelector("#homeBtn");
 let regLogInBtn = document.querySelector("#regLogInBtn");
+let myRatedBooks = document.querySelector("#myRatedBooks");
+let myRatedBooksWrapper = document.querySelector("#ratedBooksWrapper");
+let sortOptions = document.querySelector("#ratedBooksWrapper");
 
 
 const register = async () => {
@@ -70,7 +73,7 @@ const renderPage = async () => {
         },
     });
     let data = await response.json();
-    document.querySelector('h2').innerHTML = `Välkommen ${data.username}`;
+    document.querySelector('h2').innerHTML = ` ${data.username}!`;
     logInWrapper.classList.add("hidden")
     getBooks();
 }
@@ -85,7 +88,6 @@ const logout = async () => {
     bookListWrapper.classList.remove("hidden");
     loggedOutBooks();
 };
-
 const getBooks = async () => {
     let response = await fetch("http://localhost:1337/api/books?populate=deep,3", {
         headers: {
@@ -95,13 +97,12 @@ const getBooks = async () => {
     let data = await response.json();
     let books = data.data;
     let bookList = document.querySelector("#bookList");
-    console.log(books)
     
     bookList.innerHTML = "";
     books.forEach(async(book) => {
         let rating = await yourRating(book.id);
         bookList.innerHTML += `
-            <div class="card g-4 p-4 mx-3" style="width: 15rem;">
+            <div class="card g-4 p-4 mx-3 justify-content-center" style="width: 15rem;">
                 <img src="http://localhost:1337${book.attributes.cover.data.attributes.url}" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title" id="bookTitle">${book.attributes.title}</h5>
@@ -124,7 +125,6 @@ const getBooks = async () => {
         
         });
     };
-
 const loggedOutBooks = async () => {
         let response = await fetch("http://localhost:1337/api/books?populate=*", {
            
@@ -172,7 +172,6 @@ const addUserBook = async (bookId) => {
         console.log(data.message);
     }
 };
-
 const bookGrade = async (newGrade, bookId) => {
     const userId = sessionStorage.getItem("loginId");
     const firstResponse = await fetch(`http://localhost:1337/api/users/${userId}?populate=deep,3`, {
@@ -236,15 +235,69 @@ const bookGrade = async (newGrade, bookId) => {
     }
     getBooks();
 };
-
-
-profileBookListNav.addEventListener("click", () => {
-    bookListWrapper.classList.add("hidden");
-    userBookListWrapper.classList.remove("hidden");
-    getUserBooks();
-});
-
-getUserBooks = async () => {
+const yourRating = async (bookId) => {
+    let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
+        method: "GET",
+        headers:{
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        },
+    });
+    data = await response.json();
+    youRatingArray = data.grades;
+    let yourBookRating = ""
+    data.grades.forEach(grade => {
+        if (grade.book.id === bookId) {
+            yourBookRating = (grade.grade);
+        }
+    })
+    if (yourBookRating === "") {
+        return "Inget betyg";
+    }
+    return `${yourBookRating}`/5;
+}
+const getRatings = async () => {
+    let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,4`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    });
+    let data = await response.json();
+    let myRatedBooks = document.querySelector("#myRatedBooks");
+    let myRatings = data.grades;
+    console.log(myRatings);
+    let sort = document.querySelector('input[name="sort"]:checked').value;
+    const sortBooks = (books, sort) => {
+        if (sort === "Titel") {
+          books.sort((a, b) => a.book.title.localeCompare(b.book.title));
+        } else if (sort === "Författare") {
+          books.sort((a, b) => a.book.author.localeCompare(b.book.author));
+        } else if (sort === "Betyg") {
+          books.sort((a, b) => b.grade - a.grade);
+        }
+        return books;
+      };
+    let sortedBooks = sortBooks(myRatings, sort);
+  
+    // Clear the HTML of myRatedBooks
+    myRatedBooks.innerHTML = "";
+  
+    // Update the HTML of myRatedBooks with the sorted books
+    sortedBooks.forEach( (book) => {
+      myRatedBooks.innerHTML += `
+        <div class="card g-4 p-4 mx-3 justify-content-center" style="width: 15rem;">
+        <img src="http://localhost:1337${book.book.cover.url}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title" id="bookTitle">${book.book.title}</h5>
+            <p class="card-text" id="bookAuthor">${book.book.author}</p>
+            <p class="card-text" id="releaseDate">${book.book.ReleseDate}</p>
+            <p class="card-text"></p>
+            <p class="card-text" id="rating">Betyg: ${book.grade}</p>
+          </div>
+        </div>`;
+    });
+  };
+const getUserBooks = async () => {
     const response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
         headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -252,7 +305,6 @@ getUserBooks = async () => {
     });
     const data = await response.json();
     const books = data.books;
-    console.log(data.books);
     userBookList.innerHTML = "";
     books.forEach((book) => {
         userBookList.innerHTML += `
@@ -264,7 +316,17 @@ getUserBooks = async () => {
             </div>
             </div>`
         });
-    };
+};
+const getMode = async () => {
+        let response = await fetch(`http://localhost:1337/api/darktheme`, {
+            method: "GET",
+        });
+        let data = await response.json();
+        let theme = data.data.attributes.theme;
+        console.log(theme);
+        document.body.classList.add(theme);
+    }
+    getMode();
 homeBtn.addEventListener('click', (event) => {
         event.preventDefault(); 
         location.reload(); 
@@ -278,10 +340,18 @@ document.querySelector("#regNewBtn").addEventListener("click", ()=>{
     regDiv.classList.remove("hidden");
     logInWrapper.classList.add("hidden");
 });
-//document.querySelector("#add").addEventListener("click", createBook);
 document.querySelector("#regBtn").addEventListener("click", register);
 document.querySelector("#logInBtn").addEventListener("click", login);
-
+profileBookListNav.addEventListener("click", () => {
+    bookListWrapper.classList.add("hidden");
+    userBookListWrapper.classList.remove("hidden");
+    myRatedBooksWrapper.classList.remove("hidden");
+    getUserBooks();
+    getRatings();
+});
+sortOptions.addEventListener("change", () => {
+  getRatings();
+});
 
 
 // Senare för admin
@@ -318,30 +388,36 @@ let deleteBook = async (id) => {
     });
     getBooks();
   };
-  
 
 
-let yourRating = async (bookId) => {
-    let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
-        method: "GET",
-        headers:{
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`
-        },
-    });
-    data = await response.json();
-    youRatingArray = data.grades;
-    let yourBookRating = ""
-    data.grades.forEach(grade => {
-        if (grade.book.id === bookId) {
-            yourBookRating = (grade.grade);
-            console.log(yourBookRating);
-        }
-    })
-    if (yourBookRating === "") {
-        return "Not yet rated";
-    }
-    return `${yourBookRating}`/5;
-    
-}
+// const allRatings = async (bookId) => {
+//     let response = await fetch(`http://localhost:1337/api/grades?populate=deep,3`, {
+//         method: "GET",
+//         headers:{
+//             Authorization: `Bearer ${sessionStorage.getItem("token")}`
+//         },
+//     });
+//     data = await response.json();
+//     let allRatingsArray = data.data;
+//     let allRatings = [];
+//     console.log(allRatingsArray);
+//     allRatingsArray.forEach(grade => {
+//         if (book.id === bookId) {
+//             allRatings.push(grade.grade);
+//         }
+//     })
+//     console.log(allRatings);
+//     return allRatings;
+// }
+// allRatings(1);
+// const averageRating = async (bookId) => {
+//     let allRatingsArray = await allRatings(bookId);
+//     let sum = 0;
+//     allRatingsArray.forEach(grade => {
+//         sum += grade;
+//     })
+//     let average = sum / allRatingsArray.length;
+//     return average;
+// }
 
 loggedOutBooks();

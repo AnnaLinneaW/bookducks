@@ -86,6 +86,7 @@ const logout = async () => {
     logInWrapper.classList.remove("hidden");
     userBookListWrapper.classList.add("hidden");
     bookListWrapper.classList.remove("hidden");
+    myRatedBooksWrapper.classList.add("hidden");
     loggedOutBooks();
 };
 const getBooks = async () => {
@@ -235,6 +236,8 @@ const bookGrade = async (newGrade, bookId) => {
     }
     getBooks();
 };
+
+
 const yourRating = async (bookId) => {
     let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
         method: "GET",

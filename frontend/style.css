@@ -1,6 +1,6 @@
 body.light {
     background-color: #fefae0;
-    color: #000;
+    color: #283618;
     font-size: 20px;
     line-height: 1.42857143;
     margin: 0;
@@ -12,7 +12,9 @@ body.light {
 }
 body.dark{
     background-color: #a36115;
-    color: #283618;
+    color: #000;
+    font-family: bw-gradual;
+    font-size: 20px;
 }
 body.dark .title{
     background-color: #606c38;
@@ -49,6 +51,7 @@ body.dark .card{
 .blink{
     border: none;
     background-color: transparent;
+    font-size: 20px;
 
 }
 .blink:hover{

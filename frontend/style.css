@@ -6,6 +6,7 @@ body.light {
     margin: 0;
     padding: 0;
     font-family: bw-gradual;
+    font-weight: bold;
 }
 .cta{
    font-size: 30px;
@@ -15,6 +16,7 @@ body.dark{
     color: #000;
     font-family: bw-gradual;
     font-size: 20px;
+    font-weight: bold;
 }
 body.dark .title{
     background-color: #606c38;
@@ -42,11 +44,26 @@ body.dark .card{
     border-color: #000;
     border-radius: 5px;
 }
+body.dark .btn{
+    background-color: #606c38;
+    color: #283618;
+    border-style: solid;
+    border-color: #000;
+    border-radius: 5px;
+}
+body.dark select{
+    background-color: #606c38;
+    color: #283618;
+    border-style: solid;
+    border-color: #000;
+    border-radius: 5px;
+}
 .btn:hover{
     background-color: #e9edc9;
     color:  rgb(86, 84, 84);
     border-style: solid;
     border-color: #000;
+
 }
 .blink{
     border: none;

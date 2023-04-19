@@ -2,9 +2,6 @@ body.light {
     background-color: #fefae0;
     color: #283618;
     font-size: 20px;
-    line-height: 1.42857143;
-    margin: 0;
-    padding: 0;
     font-family: bw-gradual;
     font-weight: bold;
 }
@@ -70,6 +67,12 @@ body.dark select{
     background-color: transparent;
     font-size: 20px;
 
+}
+body.dark .blink{
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+    color: #000;
 }
 .blink:hover{
     border: none;

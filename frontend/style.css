@@ -37,7 +37,7 @@ body.dark .card{
 .btn{
     background-color: #ccd5ae;
     color: #000;
-    border-style: solid;
+    border-style: none;
     border-color: #000;
     border-radius: 5px;
 }
@@ -58,9 +58,7 @@ body.dark select{
 .btn:hover{
     background-color: #e9edc9;
     color:  rgb(86, 84, 84);
-    border-style: solid;
-    border-color: #000;
-
+    border-style: none;
 }
 .blink{
     border: none;
@@ -83,16 +81,15 @@ body.dark .blink{
 select{
     background-color: #ccd5ae;
     color: #000;
-    border-radius: 5px;
-    border-style: solid;
+    border-style: none;
     height: 35px;
     border-radius: 5px;
 }
 select:hover{
     background-color: #e9edc9;
     color: rgb(86, 84, 84);
-    border-style: solid;
-    border-color: #000;
+    border-style: none;
+   
 }
 .card{
     background-color: #d4a373;

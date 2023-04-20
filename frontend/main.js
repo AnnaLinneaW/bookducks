@@ -111,7 +111,7 @@ const getBooks = async () => {
                     <p class="card-text" id="releseDate">${book.attributes.ReleseDate}</p>
                     <p class="card-text"></p>
                     <p class="card-text" id="rating">Betyg: ${rating}</p>
-                    <select id="newGrade">
+                    <select id="newGrade" class="shadow">
                         <option value="None">None</option>         
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -119,8 +119,8 @@ const getBooks = async () => {
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
-                    <input type="button" class="btn btn-primary m-3" onclick="bookGrade(this.previousElementSibling.value, '${book.id}')"value="Rate">
-                    <input type="button" class="btn btn-primary" onclick="addUserBook(${book.id})"value="+ Lägg i min lista">
+                    <input type="button" class="shadow btn btn-primary m-3" onclick="bookGrade(this.previousElementSibling.value, '${book.id}')"value="Rate">
+                    <input type="button" class="shadow btn btn-primary" onclick="addUserBook(${book.id})"value="+ Lägg i min lista">
                 </div>
             </div>`;
         
@@ -146,6 +146,7 @@ const loggedOutBooks = async () => {
               </div>`
             });
         };
+    // Adding book to users to readlist
 const addUserBook = async (bookId) => {
     const userId = sessionStorage.getItem("loginId");
     const firstResponse = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
@@ -173,6 +174,7 @@ const addUserBook = async (bookId) => {
         console.log(data.message);
     }
 };
+// Function for rating a book
 const bookGrade = async (newGrade, bookId) => {
     const userId = sessionStorage.getItem("loginId");
     const firstResponse = await fetch(`http://localhost:1337/api/users/${userId}?populate=deep,3`, {
@@ -184,10 +186,10 @@ const bookGrade = async (newGrade, bookId) => {
     const grades = firstData.grades || [];    
     console.log(grades);
 
-    // Check if the book already has a grade object
+    // Check if the book already has a grade 
     const bookGrades = grades.filter((g) => g.book && g.book.id === bookId);
     if (bookGrades.length > 0) {
-        // If the book already has a grade object, update it
+        // If the book already has a grade , update it
         const gradeId = bookGrades[0].id;
         const response = await fetch(`http://localhost:1337/api/grades/${gradeId}`, {
             method: "PUT",
@@ -210,7 +212,7 @@ const bookGrade = async (newGrade, bookId) => {
             console.log(data.message);
         }
     } else {
-        // If the book doesn't have a grade object, create a new one
+        // If the book doesn't have a grade, create a new one
         const response = await fetch(`http://localhost:1337/api/grades`, {
             method: "POST",
             headers: {
@@ -237,7 +239,7 @@ const bookGrade = async (newGrade, bookId) => {
     getBooks();
 };
 
-
+// Fucrtion to get the rating of the book and the rated books
 const yourRating = async (bookId) => {
     let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,3`, {
         method: "GET",
@@ -256,7 +258,7 @@ const yourRating = async (bookId) => {
     if (yourBookRating === "") {
         return "Inget betyg";
     }
-    return `${yourBookRating}`/5;
+    return `${yourBookRating}`;
 }
 const getRatings = async () => {
     let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,4`, {
@@ -269,6 +271,7 @@ const getRatings = async () => {
     let myRatedBooks = document.querySelector("#myRatedBooks");
     let myRatings = data.grades;
     console.log(myRatings);
+    // Function for sorting the books
     let sort = document.querySelector('input[name="sort"]:checked').value;
     const sortBooks = (books, sort) => {
         if (sort === "Titel") {
@@ -320,6 +323,8 @@ const getUserBooks = async () => {
             </div>`
         });
 };
+
+// darkmode lightmode function
 const getMode = async () => {
         let response = await fetch(`http://localhost:1337/api/darktheme`, {
             method: "GET",

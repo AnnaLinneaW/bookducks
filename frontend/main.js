@@ -258,7 +258,7 @@ const yourRating = async (bookId) => {
     if (yourBookRating === "") {
         return "Inget betyg";
     }
-    return `${yourBookRating}`;
+    return `${yourBookRating}/5`;
 }
 const getRatings = async () => {
     let response = await fetch(`http://localhost:1337/api/users/me?populate=deep,4`, {
